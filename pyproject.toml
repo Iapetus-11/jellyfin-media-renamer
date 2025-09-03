@@ -6,11 +6,13 @@ authors = [
     {name = "Milo Weinberg",email = "iapetus011@gmail.com"}
 ]
 license = {text = "MIT"}
-readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
 ]
+packages = ["jellyfin_media_renamer"]
 
+[project.scripts]
+jellyfinrename = 'jellyfin_media_renamer.main:main'
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -19,4 +21,3 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
 ruff = "^0.12.11"
-

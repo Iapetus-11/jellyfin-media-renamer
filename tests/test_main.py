@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from main import infer_input_type, infer_name_and_year, InputType
+from jellyfin_media_renamer.main import infer_input_type, infer_name_and_year, InputType
 
 
 @pytest.mark.parametrize(

@@ -24,6 +24,13 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             "Hotel Hangout",
         ),
         (
+            "The Suite Life of Zack and Cody/",
+            "The Suite Life Of Zack and Cody- 1x16- Big hair and Baseball.mkv",
+            1,
+            16,
+            "Big hair and Baseball",
+        ),
+        (
             "[Erai-raws] Death Note [1080p][Multiple Subtitle][BCE68CE7]/",
             "[Erai-raws] Death Note - 01 [1080p][Multiple Subtitle][BCE68CE7].mkv",
             0,

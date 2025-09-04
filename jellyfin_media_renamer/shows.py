@@ -22,7 +22,7 @@ def infer_episode_number_and_name(
         (r"episode\s(\d+)", 1),  # Episode 01
         (r"S\d{1,2}E(\d{1,3})", 1),  # S01E01
         (r"ep(\d{1,3})", 1),  # Ep01
-        (rf"{season}x(\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_)", 1),  # {season}x01
+        (rf"{season}x(\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)", 1),  # {season}x01
         (rf"(?:^|\s|\.){season}(\d{{2,3}})(?:\s|\.|$|_|-)", 1),  # {season}01
         (r"(?:^|\s|\.|_|-)((?:0\d)|(?:[1-9]\d))(?:\s|\.|$|_|-)", 1),  # 01
     ]
@@ -37,13 +37,10 @@ def infer_episode_number_and_name(
     if ep_number is None:
         raise CommandError(f"Unable to determine episode number for path {fp}")
 
-    name = (
-        fp.name[: -len(fp.suffix)]
-        .replace(raw_show_name, "")
-        .replace(show_name, "")
-        .strip()
-    )
-    name = strip_tags(name)
+    name = fp.name[: -len(fp.suffix)]
+    name = re.sub(re.escape(raw_show_name), "", name, flags=re.IGNORECASE)
+    name = re.sub(re.escape(show_name), "", name, flags=re.IGNORECASE)
+    name = strip_tags(name.strip())
     if not match.group().isnumeric():
         name = name.replace(match.group(), "", 1)  # Remove ep number
 

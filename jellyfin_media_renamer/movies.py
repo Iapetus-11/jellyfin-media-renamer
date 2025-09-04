@@ -63,7 +63,7 @@ def process_movie_inside_folder(fp: Path, name: str, year: int, new_stem: str):
             primary_subtitles_file.with_name(new_stem).with_suffix(
                 "."
                 + ".".join(
-                    [s.removeprefix(".") for s in primary_subtitles_file.suffixes[-2:] if len(s) <= 3]
+                    [s.removeprefix(".") for s in primary_subtitles_file.suffixes[-2:] if len(s) <= 4]
                 ).lower()
             )
         )

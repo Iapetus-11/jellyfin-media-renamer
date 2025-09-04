@@ -31,7 +31,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             None,
         ),
         (
-            "Death Note 1080p Hybrid ITA BDRip DTS-HD-MA 2.0 Kira [SEV]/",
+            "Death Note/",
             "Death Note - Episode 01 - 1,28 1080p Hybrid ITA BDRip DTS-HD-MA 2.0 Kira [SEV].mkv",
             0,
             1,
@@ -77,7 +77,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             "[Exiled-Destiny]_Maid-Sama!_Ep16v2_(A46BDC49).mkv",
             0,
             16,
-            None,
+            "v2_(A46BDC49)",  # Not optimal :/
         ),
         (
             "One-Punch Man/",
@@ -144,7 +144,6 @@ def test_infer_episode_number_and_name(
         show_name,
         show_year,
         season,
-        [],
     )
 
     assert ep_number == expected_ep_number

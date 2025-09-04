@@ -85,7 +85,11 @@ def purge_extra_files(folder: Path):
     if not extra_files:
         return
 
-    print("Purge extra files?\n", "\n".join(f"\t{f}" for f in extra_files), "\n")
+    print(
+        f"Purge extra files in {folder}?\n",
+        "\n".join(f"\t{f}" for f in extra_files),
+        "\n",
+    )
 
     if input("[Y/n]: ").upper() in ["Y", "YES", "YE", ""]:
         for file in extra_files:

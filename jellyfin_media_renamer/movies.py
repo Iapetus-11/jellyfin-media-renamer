@@ -26,13 +26,6 @@ def process_movie_inside_folder(fp: Path, name: str, year: int, new_stem: str):
         f for f in sub_objs if f.suffixes and f.suffixes[-1][1:] in SUBTITLES_FILE_EXTS
     }
 
-    if unprocessable_paths := (sub_objs - video_files - subtitle_files):
-        print(
-            "Unprocessable paths:\n",
-            "\n".join(f"\t{f}" for f in unprocessable_paths),
-            "\n",
-        )
-
     assert len(video_files) >= 1
 
     # Sometimes torrents include a preview or some message from the uploader

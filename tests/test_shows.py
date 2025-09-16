@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from jellyfin_media_renamer.common import infer_name_and_year
-from jellyfin_media_renamer.shows import infer_episode_number_and_name
+from jellyfin_media_renamer.shows import infer_episode_info
 
 
 @pytest.mark.parametrize(
@@ -14,6 +14,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
         "season",
         "expected_ep_number",
         "expected_ep_name",
+        "expected_parts",
     ),
     [
         (
@@ -22,6 +23,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             1,
             "Hotel Hangout",
+            None,
         ),
         (
             "The Suite Life of Zack and Cody/",
@@ -29,12 +31,14 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             16,
             "Big hair and Baseball",
+            None,
         ),
         (
             "[Erai-raws] Death Note [1080p][Multiple Subtitle][BCE68CE7]/",
             "[Erai-raws] Death Note - 01 [1080p][Multiple Subtitle][BCE68CE7].mkv",
             0,
             1,
+            None,
             None,
         ),
         (
@@ -43,6 +47,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             0,
             1,
             "1,28",
+            None,
         ),
         (
             "Malcolm in the Middle (2000) (1080p AMZN WEB-DL x265 Silence)/",
@@ -50,12 +55,14 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             7,
             22,
             "Graduation",
+            None,
         ),
         (
             "Test Show/",
             "Test Show S01E01.mkv",
             1,
             1,
+            None,
             None,
         ),
         (
@@ -64,6 +71,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             1,
             "Episode Name",
+            None,
         ),
         (
             "Test Show (2025)/",
@@ -71,6 +79,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             1,
             "Episode Name",
+            None,
         ),
         (
             "Test Show (2025)/",
@@ -78,6 +87,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             1,
             "Episode Name",
+            None,
         ),
         (
             "[Exiled-Destiny]_Maid-Sama!/",
@@ -85,12 +95,14 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             0,
             16,
             "v2_(A46BDC49)",  # Not optimal :/
+            None,
         ),
         (
             "One-Punch Man/",
             "One-Punch Man - 08 [BDRip 1080p AVC][FLAC].mkv",
             1,
             8,
+            None,
             None,
         ),
         (
@@ -99,6 +111,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             1,
             "I'm Used to It",
+            None,
         ),
         (
             "NCIS (1234)/",
@@ -106,12 +119,14 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             1,
             "Yankee White",
+            None,
         ),
         (
             "Naruto Shippuden/",
             "[Koten_Gars] Naruto Shippuden - 154 [iTunes][h.264][1080p][AC3] [A5D2B724].mkv",
             1,
             54,
+            None,
             None,
         ),
         (
@@ -120,6 +135,7 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             2,
             "Here Goes Nothing",
+            None,
         ),
         (
             "./[AC] Kamisama Kiss/",
@@ -127,11 +143,28 @@ from jellyfin_media_renamer.shows import infer_episode_number_and_name
             1,
             4,
             None,
+            None,
+        ),
+        (
+            "./SpongeBob SquarePants/",
+            "SpongeBob SquarePants S08E05ab - Squidward's School for Grown Ups + Oral Report (1080p AMZN Webrip x265 10bit EAC3 2.0 - Frys) [TAoE].mkv",
+            8,
+            5,
+            'Squidward\'s School for Grown Ups + Oral Report',
+            "ab",
+        ),
+        (
+            "./SpongeBob SquarePants/",
+            "SpongeBob SquarePants S08E05a - Squidward's School for Grown Ups + Oral Report (1080p AMZN Webrip x265 10bit EAC3 2.0 - Frys) [TAoE].mkv",
+            8,
+            5,
+            'Squidward\'s School for Grown Ups + Oral Report',
+            "a",
         ),
     ],
 )
 def test_infer_episode_number_and_name(
-    show_path, path, season, expected_ep_number, expected_ep_name
+    show_path, path, season, expected_ep_number, expected_ep_name, expected_parts
 ):
     def make_path_mock(str_path: str) -> MagicMock:
         path = Path(str_path)
@@ -145,7 +178,7 @@ def test_infer_episode_number_and_name(
 
     raw_show_name, show_name, show_year = infer_name_and_year(make_path_mock(show_path))
 
-    ep_number, ep_name = infer_episode_number_and_name(
+    info = infer_episode_info(
         make_path_mock(path),
         raw_show_name,
         show_name,
@@ -153,5 +186,6 @@ def test_infer_episode_number_and_name(
         season,
     )
 
-    assert ep_number == expected_ep_number
-    assert ep_name == expected_ep_name
+    assert info.number == expected_ep_number
+    assert info.name == expected_ep_name
+    assert info.parts == expected_parts

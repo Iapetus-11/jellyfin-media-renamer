@@ -13,37 +13,37 @@ from jellyfin_media_renamer.common import infer_name_and_year
         ("./[AC] Kamisama Kiss", "Kamisama Kiss", "Kamisama Kiss", None),
         (
             "./Harry Potter and the Chamber of Secrets (2002) [1080p]",
-            "Harry Potter and the Chamber of Secrets",
+            "Harry Potter and the Chamber of Secrets (2002)",
             "Harry Potter and the Chamber of Secrets",
             2002,
         ),
         (
             "./My Little Pony Equestria Girls - Friendship Games (2015) [1080p] [BluRay] [5.1] [YTS.MX]",
-            "My Little Pony Equestria Girls - Friendship Games",
+            "My Little Pony Equestria Girls - Friendship Games (2015)",
             "My Little Pony Equestria Girls - Friendship Games",
             2015,
         ),
         (
             "./My.Little.Pony.Equestria.Girls.2013.1080p.BluRay.x264-PHOBOS[rarbg]",
-            "My.Little.Pony.Equestria.Girls",
+            "My.Little.Pony.Equestria.Girls.2013.1080p.BluRay.x264-PHOBOS",
             "My Little Pony Equestria Girls",
             2013,
         ),
         (
             "./Harry Potter and the Deathly Hallows Part 2 (2011) 1080p.BRrip.scOrp.sujaidr (pimprg)",
-            "Harry Potter and the Deathly Hallows Part 2",
+            "Harry Potter and the Deathly Hallows Part 2 (2011) 1080p.BRrip.scOrp.sujaidr (pimprg)",
             "Harry Potter and the Deathly Hallows Part 2",
             2011,
         ),
         (
             "./Ouran High School Host Club (2006) [1080p x265 HEVC 10bit BluRay Dual Audio AAC] [Prof][darkflux fixed]",
-            "Ouran High School Host Club",
+            "Ouran High School Host Club (2006)",
             "Ouran High School Host Club",
             2006,
         ),
         (
             "./Malcolm in the Middle (2000) (1080p AMZN WEB-DL x265 Silence)",
-            "Malcolm in the Middle",
+            "Malcolm in the Middle (2000) (1080p AMZN WEB-DL x265 Silence)",
             "Malcolm in the Middle",
             2000,
         ),
@@ -53,6 +53,12 @@ from jellyfin_media_renamer.common import infer_name_and_year
             "Death Note",
             None,
         ),
+        (
+            "./www.UIndex.org    -    Nacho Libre 2006 1080p ATVP WEB-DL DD 5 1 H 264-PiRaTeS",
+            "www.UIndex.org    -    Nacho Libre 2006 1080p ATVP WEB-DL DD 5 1 H 264-PiRaTeS",
+            "Nacho Libre",
+            2006,
+        )
     ],
 )
 @pytest.mark.parametrize("is_file", [True, False])

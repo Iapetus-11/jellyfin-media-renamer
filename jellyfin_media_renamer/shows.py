@@ -1,4 +1,5 @@
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 from jellyfin_media_renamer.common import (
@@ -9,53 +10,94 @@ from jellyfin_media_renamer.common import (
 )
 
 
-def infer_episode_number_and_name(
+@dataclass(frozen=True, slots=True, kw_only=True)
+class EpisodeInfo:
+    number: int
+    name: str | None
+    parts: str | None
+
+
+def infer_episode_info(
     fp: Path,
     raw_show_name: str,
     show_name: str,
     year: int | None,
     season: int,
-) -> tuple[int, str | None]:
+) -> EpisodeInfo:
     assert fp.is_file()
 
-    re_patterns = [
-        (r"episode\s(\d+)", 1),  # Episode 01
-        (r"S\d{1,2}E(\d{1,3})", 1),  # S01E01
-        (r"ep(\d{1,3})", 1),  # Ep01
-        (rf"{season}x(\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)", 1),  # {season}x01
-        (rf"(?:^|\s|\.){season}(\d{{2,3}})(?:\s|\.|$|_|-)", 1),  # {season}01
-        (r"(?:^|\s|\.|_|-)((?:0\d)|(?:[1-9]\d))(?:\s|\.|$|_|-)", 1),  # 01
+    ep_number_patterns = [
+        r"episode\s(?P<ep>\d+)",  # Episode 01
+        r"S\d{1,2}E((?P<ep>\d{1,3})(?P<parts>(?:abcd)|(?:abc)|(?:ab)|(?:a))?)(?:\s|-|$|_|\.|\()",  # S01E01 or # S01E01
+        r"ep(?P<ep>\d{1,3})",  # Ep01
+        rf"{season}x(?P<ep>\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)",  # {season}x01
+        rf"(?:^|\s|\.){season}(?P<ep>\d{{2,3}})(?:\s|\.|$|_|-)",  # {season}01
+        r"(?:^|\s|\.|_|-)(?P<ep>(?:0\d)|(?:[1-9]\d))(?:\s|\.|$|_|-)",  # 01
     ]
 
     ep_number: int | None = None
+    parts: str | None = None
+
     match: re.Match[str] | None = None
-    for pattern, cap_group in re_patterns:
+    for pattern in ep_number_patterns:
         if match := next(re.finditer(pattern, fp.name, re.IGNORECASE), None):
-            ep_number = int(match.group(cap_group).strip())
+            ep_number = int(match.group("ep").strip())
+
+            try:
+                parts = (match.group("parts") or "").strip()
+            except IndexError:
+                pass
+
             break
 
     if ep_number is None:
         raise CommandError(f"Unable to determine episode number for path {fp}")
 
+    ep_part_patterns = [
+        r"(?:(?:parts)|(?:part)|(?:pt))(?:\s|\.|-|_)*(?P<p_start>[a-dA-D1-9])(?:-(?P<p_end>[a-dA-D1-9]))?(?:\s|\.|-|_|$)",
+    ]
+
+    for pattern in ep_part_patterns:
+        if part_match := next(re.finditer(pattern, fp.name, re.IGNORECASE), None):
+            part_match_dict = part_match.groupdict()
+            parts = "-".join(filter(None, map(str.strip, [
+                part_match_dict.get("p_start", ""),
+                part_match_dict.get("p_end", ""),
+            ])))
+
     name = fp.name[: -len(fp.suffix)]
     name = re.sub(re.escape(raw_show_name), "", name, flags=re.IGNORECASE)
     name = re.sub(re.escape(show_name), "", name, flags=re.IGNORECASE)
     name = strip_tags(name.strip())
-    if not match.group().isnumeric():
-        name = name.replace(match.group(), "", 1)  # Remove ep number
+    full_group = match.group().rstrip('. ')
+    if not full_group.isnumeric():
+        name = name.replace(full_group, "", 1)  # Remove ep number
 
     for re_pattern in [
         r"((?:\(|\[|\s|-|\.)\d{4}(?:\)|\]|\s|-|\.))",  # Year
         r"(\((?:(?:1080)|(?:480)|(?:720)|(?:2160))p.*\))",  # (1080p ...)
+        r"((?:www)?\.?UIndex\.org\s*-?\s*)",  # www.UIndex.org -
+        r"((?:-|_|\.|\s)?WEB(?:-|_|\.|\s)DL(?:-|_|\.|\s)?)"  # WEB-Dl
+        r"((?:-|_|\.|\s)?DVD(?:-|_|\.|\s)?RIP(?:-|_|\.|\s)?)",  # DVDRIP
     ]:
         name = re.sub(re_pattern, "", name, count=1, flags=re.IGNORECASE)
 
-    if "1080p " in name:
-        name = name.split("1080p")[0]
+    for resolution in ("720p", "1080p", "2160p"):
+        if f"{resolution} " in name:
+            name = name.split(resolution)[0]
+            break
 
     name = name.strip(",.-_ ")
+    parts = (parts or '').strip(",.-_ ")
 
-    return ep_number, name or None
+    if not (parts.isalpha() or parts.isnumeric()):
+        parts = None
+
+    return EpisodeInfo(
+        number=ep_number,
+        name=name or None,
+        parts=parts or None,
+    )
 
 
 def process_show_season(
@@ -73,7 +115,7 @@ def process_show_season(
         if fp.suffixes[-1].removeprefix(".").lower() not in VIDEO_FILE_EXTS:
             continue
 
-        ep_number, ep_name = infer_episode_number_and_name(
+        ep_info = infer_episode_info(
             fp,
             raw_show_name,
             show_name,
@@ -81,10 +123,24 @@ def process_show_season(
             season,
         )
 
+        new_name = f"{show_stem} S{season:02d}E{ep_info.number:02d}"
+
+        if ep_info.name:
+            new_name += ' ' + ep_info.name
+            new_name = new_name.strip()
+
+        # TODO: Not really sure what to do with parts yet...
+        # if ep_info.parts:
+        #     p_min = min(ep_info.parts)
+        #     p_max = max(ep_info.parts)
+        #
+        #     if p_min == p_max:
+        #         new_name += f'-part{p_min}'
+        #     else:
+        #         new_name += f'-part{p_min}-{p_max}'
+
         fp.rename(
-            fp.with_name(
-                f"{show_stem} S{season:02d}E{ep_number:02d} {ep_name or ''}".strip()
-            ).with_suffix(fp.suffixes[-1])
+            fp.with_name(new_name.strip()).with_suffix(fp.suffixes[-1])
         )
 
     purge_extra_files(folder)

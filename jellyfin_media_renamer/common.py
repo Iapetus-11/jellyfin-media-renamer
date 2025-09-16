@@ -57,6 +57,7 @@ def infer_name_and_year(fp: Path) -> tuple[str, str, int | None]:
     # Find the year and split the title by it (we don't care for tags/junk after the year)
     year = next(re.finditer(r"\(([0-9]{4})\)", fp.name), None)
     if year:
+        raw_name = strip_tags(name).strip()
         name = name.split(year.group())[0]
         year = int(year.group(1))
     else:
@@ -64,16 +65,27 @@ def infer_name_and_year(fp: Path) -> tuple[str, str, int | None]:
         year = next(re.finditer(r"((19)|(20)[0-9]{2})", fp.name), None)
         if year:
             year = year.group()
+        raw_name = strip_tags(name).strip()
         if year:
-            name = name.split(f".{year}")[0]
+            name = name.split(str(year))[0]
             year = int(year)
 
-    raw_name = strip_tags(name).strip()
+    for re_pattern in [
+        r"((?:www)?\.?UIndex\.org\s*-?\s*)",  # www.UIndex.org -
+        r"((?:-|_|\.|\s)?WEB(?:-|_|\.|\s)DL(?:-|_|\.|\s)?)"  # WEB-Dl
+        r"((?:-|_|\.|\s)?DVD(?:-|_|\.|\s)?RIP(?:-|_|\.|\s)?)",  # DVDRIP
+    ]:
+        name = re.sub(re_pattern, "", name, count=1, flags=re.IGNORECASE)
+
+    for resolution in ("720p", "1080p", "2160p"):
+        if f"{resolution} " in name:
+            name = name.split(resolution)[0]
+            break
 
     name = re.sub(r"\.+(\w+)", r" \1", name)  # Replace dots with spaces
     name = strip_tags(name)
 
-    return raw_name, name.strip(), year
+    return raw_name.strip(" ."), name.strip(" ."), year
 
 
 def purge_extra_files(folder: Path):

@@ -64,7 +64,7 @@ from jellyfin_media_renamer.common import infer_name_and_year
             "Conan.The.Barbarian.1982.Explicit.1080p.BluRay.x265-RBG",
             "Conan The Barbarian",
             1982,
-        )
+        ),
     ],
 )
 @pytest.mark.parametrize("is_file", [True, False])

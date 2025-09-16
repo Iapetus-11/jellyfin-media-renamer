@@ -20,10 +20,14 @@ def process_movie_inside_folder(fp: Path, name: str, year: int, new_stem: str):
 
     sub_objs = {f for f in fp.iterdir() if f.is_file()}
     video_files = {
-        f for f in sub_objs if f.suffixes and f.suffixes[-1][1:].lower() in VIDEO_FILE_EXTS
+        f
+        for f in sub_objs
+        if f.suffixes and f.suffixes[-1][1:].lower() in VIDEO_FILE_EXTS
     }
     subtitle_files = {
-        f for f in sub_objs if f.suffixes and f.suffixes[-1][1:].lower() in SUBTITLES_FILE_EXTS
+        f
+        for f in sub_objs
+        if f.suffixes and f.suffixes[-1][1:].lower() in SUBTITLES_FILE_EXTS
     }
 
     assert len(video_files) >= 1
@@ -63,7 +67,11 @@ def process_movie_inside_folder(fp: Path, name: str, year: int, new_stem: str):
             primary_subtitles_file.with_name(new_stem).with_suffix(
                 "."
                 + ".".join(
-                    [s.removeprefix(".") for s in primary_subtitles_file.suffixes[-2:] if len(s) <= 4]
+                    [
+                        s.removeprefix(".")
+                        for s in primary_subtitles_file.suffixes[-2:]
+                        if len(s) <= 4
+                    ]
                 ).lower()
             )
         )

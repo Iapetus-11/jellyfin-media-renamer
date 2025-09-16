@@ -150,7 +150,7 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "SpongeBob SquarePants S08E05ab - Squidward's School for Grown Ups + Oral Report (1080p AMZN Webrip x265 10bit EAC3 2.0 - Frys) [TAoE].mkv",
             8,
             5,
-            'Squidward\'s School for Grown Ups + Oral Report',
+            "Squidward's School for Grown Ups + Oral Report",
             "ab",
         ),
         (
@@ -158,7 +158,7 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "SpongeBob SquarePants S08E05a - Squidward's School for Grown Ups + Oral Report (1080p AMZN Webrip x265 10bit EAC3 2.0 - Frys) [TAoE].mkv",
             8,
             5,
-            'Squidward\'s School for Grown Ups + Oral Report',
+            "Squidward's School for Grown Ups + Oral Report",
             "a",
         ),
     ],

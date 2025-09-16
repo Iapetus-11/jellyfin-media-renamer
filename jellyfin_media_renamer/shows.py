@@ -60,16 +60,24 @@ def infer_episode_info(
     for pattern in ep_part_patterns:
         if part_match := next(re.finditer(pattern, fp.name, re.IGNORECASE), None):
             part_match_dict = part_match.groupdict()
-            parts = "-".join(filter(None, map(str.strip, [
-                part_match_dict.get("p_start", ""),
-                part_match_dict.get("p_end", ""),
-            ])))
+            parts = "-".join(
+                filter(
+                    None,
+                    map(
+                        str.strip,
+                        [
+                            part_match_dict.get("p_start", ""),
+                            part_match_dict.get("p_end", ""),
+                        ],
+                    ),
+                )
+            )
 
     name = fp.name[: -len(fp.suffix)]
     name = re.sub(re.escape(raw_show_name), "", name, flags=re.IGNORECASE)
     name = re.sub(re.escape(show_name), "", name, flags=re.IGNORECASE)
     name = strip_tags(name.strip())
-    full_group = match.group().rstrip('. ')
+    full_group = match.group().rstrip(". ")
     if not full_group.isnumeric():
         name = name.replace(full_group, "", 1)  # Remove ep number
 
@@ -88,7 +96,7 @@ def infer_episode_info(
             break
 
     name = name.strip(",.-_ ")
-    parts = (parts or '').strip(",.-_ ")
+    parts = (parts or "").strip(",.-_ ")
 
     if not (parts.isalpha() or parts.isnumeric()):
         parts = None
@@ -126,7 +134,7 @@ def process_show_season(
         new_name = f"{show_stem} S{season:02d}E{ep_info.number:02d}"
 
         if ep_info.name:
-            new_name += ' ' + ep_info.name
+            new_name += " " + ep_info.name
             new_name = new_name.strip()
 
         # TODO: Not really sure what to do with parts yet...
@@ -139,9 +147,7 @@ def process_show_season(
         #     else:
         #         new_name += f'-part{p_min}-{p_max}'
 
-        fp.rename(
-            fp.with_name(new_name.strip()).with_suffix(fp.suffixes[-1])
-        )
+        fp.rename(fp.with_name(new_name.strip()).with_suffix(fp.suffixes[-1]))
 
     purge_extra_files(folder)
 

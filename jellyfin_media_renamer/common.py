@@ -62,7 +62,7 @@ def infer_name_and_year(fp: Path) -> tuple[str, str, int | None]:
         year = int(year.group(1))
     else:
         # Try and find the year if it's not in ()
-        year = next(re.finditer(r"((19)|(20)[0-9]{2})", fp.name), None)
+        year = next(re.finditer(r"((?:19|20)[0-9]{2})", fp.name), None)
         if year:
             year = year.group()
         raw_name = strip_tags(name).strip()

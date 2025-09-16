@@ -58,6 +58,12 @@ from jellyfin_media_renamer.common import infer_name_and_year
             "www.UIndex.org    -    Nacho Libre 2006 1080p ATVP WEB-DL DD 5 1 H 264-PiRaTeS",
             "Nacho Libre",
             2006,
+        ),
+        (
+            "./Conan.The.Barbarian.1982.Explicit.1080p.BluRay.x265-RBG",
+            "Conan.The.Barbarian.1982.Explicit.1080p.BluRay.x265-RBG",
+            "Conan The Barbarian",
+            1982,
         )
     ],
 )

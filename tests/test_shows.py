@@ -161,6 +161,14 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "Squidward's School for Grown Ups + Oral Report",
             "a",
         ),
+        (
+            "./A Mickey Mouse Cartoon/",
+            "S01E01. No Service - A Mickey Mouse Cartoon.mp4",
+            1,
+            1,
+            "No Service",
+            None,
+        ),
     ],
 )
 def test_infer_episode_number_and_name(

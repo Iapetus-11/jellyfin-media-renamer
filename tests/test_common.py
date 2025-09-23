@@ -65,6 +65,12 @@ from jellyfin_media_renamer.common import infer_name_and_year
             "Conan The Barbarian",
             1982,
         ),
+        (
+            "./Prince Of Persia ( 2010 ) [1080p]",
+            "Prince Of Persia ( 2010 )",
+            "Prince Of Persia",
+            2010,
+        ),
     ],
 )
 @pytest.mark.parametrize("is_file", [True, False])

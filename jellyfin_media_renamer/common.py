@@ -55,7 +55,7 @@ def infer_name_and_year(fp: Path) -> tuple[str, str, int | None]:
         name = name[: -len(fp.suffix)]
 
     # Find the year and split the title by it (we don't care for tags/junk after the year)
-    year = next(re.finditer(r"\(([0-9]{4})\)", fp.name), None)
+    year = next(re.finditer(r"\(\s?([0-9]{4})\s?\)", fp.name), None)
     if year:
         raw_name = strip_tags(name).strip()
         name = name.split(year.group())[0]

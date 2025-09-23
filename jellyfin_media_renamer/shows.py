@@ -12,7 +12,7 @@ from jellyfin_media_renamer.common import (
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class EpisodeInfo:
-    number: int
+    numbers: list[int]
     name: str | None
     parts: str | None
 
@@ -27,21 +27,25 @@ def infer_episode_info(
     assert fp.is_file()
 
     ep_number_patterns = [
-        r"episode\s(?P<ep>\d+)",  # Episode 01
-        r"S\d{1,2}E((?P<ep>\d{1,3})(?P<parts>(?:abcd)|(?:abc)|(?:ab)|(?:a))?)(?:\s|-|$|_|\.|\()",  # S01E01 or # S01E01
-        r"ep(?P<ep>\d{1,3})",  # Ep01
-        rf"{season}x(?P<ep>\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)",  # {season}x01
-        rf"(?:^|\s|\.){season}(?P<ep>\d{{2,3}})(?:\s|\.|$|_|-)",  # {season}01
-        r"(?:^|\s|\.|_|-)(?P<ep>(?:0\d)|(?:[1-9]\d))(?:\s|\.|$|_|-)",  # 01
+        r"episode(\s|\.|-)?(?P<ep_start>\d+)(?:-(?P<ep_end>\d+))?",  # Episode 01
+        r"S\d{1,2}((?:E(?P<ep_start>\d{1,3}))(?:E(?P<ep_end>\d{1,3}))*(?P<parts>(?:abcd)|(?:abc)|(?:ab)|(?:a))?)(?:\s|-|$|_|\.|\()",  # S01E01 or S01E01E02E03
+        r"ep(?P<ep_start>\d{1,3})",  # Ep01
+        rf"{season}x(?P<ep_start>\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)",  # {season}x01
+        rf"(?:^|\s|\.){season}(?P<ep_start>\d{{2,3}})(?:\s|\.|$|_|-)",  # {season}01
+        r"(?:^|\s|\.|_|-)(?P<ep_start>(?:0\d)|(?:[1-9]\d))(?:\s|\.|$|_|-)",  # 01
     ]
 
-    ep_number: int | None = None
+    ep_start: int | None = None
+    ep_end: int | None = None
     parts: str | None = None
 
     match: re.Match[str] | None = None
     for pattern in ep_number_patterns:
         if match := next(re.finditer(pattern, fp.name, re.IGNORECASE), None):
-            ep_number = int(match.group("ep").strip())
+            ep_start = int(match.group("ep_start").strip())
+            ep_end = int((match.groupdict().get("ep_end") or "").strip() or -1)
+            if ep_end == -1:
+                ep_end = None
 
             try:
                 parts = (match.group("parts") or "").strip()
@@ -50,7 +54,7 @@ def infer_episode_info(
 
             break
 
-    if ep_number is None:
+    if ep_start is None:
         raise CommandError(f"Unable to determine episode number for path {fp}")
 
     ep_part_patterns = [
@@ -102,7 +106,7 @@ def infer_episode_info(
         parts = None
 
     return EpisodeInfo(
-        number=ep_number,
+        numbers=list(range(ep_start, (ep_end or ep_start) + 1)),
         name=name or None,
         parts=parts or None,
     )
@@ -131,7 +135,8 @@ def process_show_season(
             season,
         )
 
-        new_name = f"{show_stem} S{season:02d}E{ep_info.number:02d}"
+        ep_numbers_fmtd = "".join(f"E{n:02d}" for n in ep_info.numbers)
+        new_name = f"{show_stem} S{season:02d}{ep_numbers_fmtd}"
 
         if ep_info.name:
             new_name += " " + ep_info.name

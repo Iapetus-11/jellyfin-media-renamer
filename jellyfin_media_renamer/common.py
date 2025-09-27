@@ -72,6 +72,7 @@ def infer_name_and_year(fp: Path) -> tuple[str, str, int | None]:
 
     for re_pattern in [
         r"((?:www)?\.?UIndex\.org\s*-?\s*)",  # www.UIndex.org -
+        r"((?:www)?\.?Torrenting\.com\s*-?\s*)",  # www.UIndex.org -
         r"((?:-|_|\.|\s)?WEB(?:-|_|\.|\s)DL(?:-|_|\.|\s)?)"  # WEB-Dl
         r"((?:-|_|\.|\s)?DVD(?:-|_|\.|\s)?RIP(?:-|_|\.|\s)?)",  # DVDRIP
     ]:

@@ -177,6 +177,14 @@ from jellyfin_media_renamer.shows import infer_episode_info
             None,
             None,
         ),
+        (
+            "./The Office/",
+            "E11 Night Out.mp4",
+            None,
+            [11],
+            "Night Out",
+            None,
+        ),
     ],
 )
 def test_infer_episode_number_and_name(

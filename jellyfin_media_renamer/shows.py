@@ -28,7 +28,7 @@ def infer_episode_info(
 
     ep_number_patterns = [
         r"episode(\s|\.|-)?(?P<ep_start>\d+)(?:-(?P<ep_end>\d+))?",  # Episode 01
-        r"S\d{1,2}((?:E(?P<ep_start>\d{1,3}))(?:E(?P<ep_end>\d{1,3}))*(?P<parts>(?:abcd)|(?:abc)|(?:ab)|(?:a))?)(?:\s|-|$|_|\.|\()",  # S01E01 or S01E01E02E03
+        r"(?:S\d{1,2})?((?:E(?P<ep_start>\d{1,3}))(?:E(?P<ep_end>\d{1,3}))*(?P<parts>(?:abcd)|(?:abc)|(?:ab)|(?:a))?)(?:\s|-|$|_|\.|\()",  # S01E01 or S01E01E02E03
         r"ep(?P<ep_start>\d{1,3})",  # Ep01
         rf"{season}x(?P<ep_start>\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)",  # {season}x01
         rf"(?:^|\s|\.){season}(?P<ep_start>\d{{2,3}})(?:\s|\.|$|_|-)",  # {season}01

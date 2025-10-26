@@ -30,7 +30,9 @@ def infer_input_type(fp: Path) -> InputType:
     sub_objs = list(fp.iterdir())
 
     if any(
-        sub_obj.is_dir() and "SEASON" in sub_obj.name.upper() for sub_obj in sub_objs
+        sub_obj.is_dir()
+        and ("SEASON" in sub_obj.name.upper() or "S0" in sub_obj.name.upper())
+        for sub_obj in sub_objs
     ):
         return InputType.FOLDER_WITH_SHOW_SEASONS
 

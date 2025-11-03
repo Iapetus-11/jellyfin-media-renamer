@@ -185,9 +185,17 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "Night Out",
             None,
         ),
+        (
+            "./Gilmore.Girls/",
+            "Gilmore.Girls.S02E13.A-Tisket,.A-Tasket.1080p.WEB-DL.x265.10bit.HEVC-MONOLITH.mkv",
+            2,
+            [13],
+            "A-Tisket, A-Tasket",
+            None,
+        ),
     ],
 )
-def test_infer_episode_number_and_name(
+def test_infer_episode_info(
     show_path, path, season, expected_ep_numbers, expected_ep_name, expected_parts
 ):
     def make_path_mock(str_path: str) -> MagicMock:

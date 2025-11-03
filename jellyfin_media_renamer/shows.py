@@ -94,10 +94,12 @@ def infer_episode_info(
     ]:
         name = re.sub(re_pattern, "", name, count=1, flags=re.IGNORECASE)
 
-    for resolution in ("720p", "1080p", "2160p"):
-        if f"{resolution} " in name:
-            name = name.split(resolution)[0]
-            break
+    for match in re.finditer(
+        r"(:?\.|\s)(?:1080|480|720|2160)p(:?\.|\s)", name, flags=re.IGNORECASE
+    ):
+        name = name.split(match.group())[0]
+
+    name = re.sub(r"(,\.)([A-Za-z])", r", \2", name)
 
     name = name.strip(",.-_ ")
     parts = (parts or "").strip(",.-_ ")

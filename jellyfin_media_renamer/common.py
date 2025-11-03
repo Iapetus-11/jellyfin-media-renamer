@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 import re
@@ -19,6 +20,9 @@ VIDEO_FILE_EXTS = [
 SUBTITLES_FILE_EXTS = ["srt", "sub"]
 
 
+logger = logging.getLogger(__name__)
+
+
 class CommandError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
@@ -28,8 +32,8 @@ class CommandError(Exception):
 def get_name_and_year(fp: Path) -> tuple[str, str, int | None]:
     raw_name, name, year = infer_name_and_year(fp)
 
-    print(f"Detected name: {name}")
-    print(f"Detected year: {year}")
+    logger.info(f"Detected name: {name}")
+    logger.info(f"Detected year: {year}")
     is_correct = input("Is this correct? (Y/n): ")
     is_correct = is_correct.upper() in ["Y", "Yes", "Ye", ""]
 
@@ -98,12 +102,14 @@ def purge_extra_files(folder: Path):
     if not extra_files:
         return
 
-    print(
-        f"Purge extra files in {folder}?\n",
-        "\n".join(f"\t{f}" for f in extra_files),
-        "\n",
+    confirmation_message = "\n".join(
+        (
+            f"Purge extra files in {folder}?",
+            "\n".join(f"\t{f}" for f in extra_files),
+            "\n",
+        )
     )
 
-    if input("[Y/n]: ").upper() in ["Y", "YES", "YE", ""]:
+    if input(f"{confirmation_message} [Y/n]: ").upper() in ["Y", "YES", "YE", ""]:
         for file in extra_files:
             os.remove(file.absolute())

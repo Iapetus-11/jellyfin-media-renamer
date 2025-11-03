@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from jellyfin_media_renamer.common import (
@@ -7,6 +8,8 @@ from jellyfin_media_renamer.common import (
     infer_name_and_year,
     purge_extra_files,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def process_movie_without_folder(fp: Path, name: str, year: int, new_stem: str):
@@ -76,6 +79,6 @@ def process_movie_inside_folder(fp: Path, name: str, year: int, new_stem: str):
             )
         )
     elif len(subtitle_files):
-        print("Couldn't determine primary subtitles file :/")
+        logger.warning("Couldn't determine primary subtitles file :/")
 
     purge_extra_files(fp)

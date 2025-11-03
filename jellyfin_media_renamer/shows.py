@@ -1,3 +1,4 @@
+import logging
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -8,6 +9,8 @@ from jellyfin_media_renamer.common import (
     strip_tags,
     VIDEO_FILE_EXTS,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -123,11 +126,13 @@ def process_show_season(
 
     for fp in folder.iterdir():
         if not fp.is_file():
-            print(f"Unknown folder/object: {fp}")
+            logger.warning(f"Unknown folder/object: {fp}")
             continue
 
         if fp.suffixes[-1].removeprefix(".").lower() not in VIDEO_FILE_EXTS:
             continue
+
+        logger.debug(f"Processing season episode file: {fp.name!r}")
 
         ep_info = infer_episode_info(
             fp,
@@ -164,6 +169,7 @@ def process_show(fp: Path, raw_name: str, name: str, year: int | None, new_stem:
 
     for file in fp.iterdir():
         if file.is_dir() and "SEASON" in file.name.upper():
+            logger.debug(f"Processing season folder: {file.name!r}")
             season_num = next(re.finditer(r"(\d{1,2})(?:\s|$)", file.name), None)
             if season_num is None:
                 raise CommandError(f"Unable to determine season number for {file}")

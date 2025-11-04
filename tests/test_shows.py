@@ -193,6 +193,14 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "A-Tisket, A-Tasket",
             None,
         ),
+        (
+            "./Gilmore.Girls/",
+            "Gilmore.Girls.S01E17.The.Breakup,.Part.2.1080p.WEB-DL.x265.10bit.HEVC-MONOLITH.mkv",
+            1,
+            [17],
+            "The.Breakup",
+            "2",
+        ),
     ],
 )
 def test_infer_episode_info(

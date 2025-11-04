@@ -29,6 +29,8 @@ def infer_episode_info(
 ) -> EpisodeInfo:
     assert fp.is_file()
 
+    name = fp.name[: -len(fp.suffix)]
+
     ep_number_patterns = [
         r"episode(\s|\.|-)?(?P<ep_start>\d+)(?:-(?P<ep_end>\d+))?",  # Episode 01
         r"(?:S\d{1,2})?((?:E(?P<ep_start>\d{1,3}))(?:E(?P<ep_end>\d{1,3}))*(?P<parts>(?:abcd)|(?:abc)|(?:ab)|(?:a))?)(?:\s|-|$|_|\.|\()",  # S01E01 or S01E01E02E03
@@ -66,6 +68,7 @@ def infer_episode_info(
 
     for pattern in ep_part_patterns:
         if part_match := next(re.finditer(pattern, fp.name, re.IGNORECASE), None):
+            name = name.replace(part_match.group(), "")
             part_match_dict = part_match.groupdict()
             parts = "-".join(
                 filter(
@@ -73,14 +76,14 @@ def infer_episode_info(
                     map(
                         str.strip,
                         [
-                            part_match_dict.get("p_start", ""),
-                            part_match_dict.get("p_end", ""),
+                            part_match_dict.get("p_start") or "",
+                            part_match_dict.get("p_end") or "",
                         ],
                     ),
                 )
             )
+            break
 
-    name = fp.name[: -len(fp.suffix)]
     name = re.sub(re.escape(raw_show_name), "", name, flags=re.IGNORECASE)
     name = re.sub(re.escape(show_name), "", name, flags=re.IGNORECASE)
     name = strip_tags(name.strip())

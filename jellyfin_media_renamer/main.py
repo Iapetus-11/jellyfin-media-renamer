@@ -58,7 +58,7 @@ def infer_input_type(fp: Path) -> InputType:
 
 def setup_logging(*, verbose: bool):
     level = logging.INFO
-    format_ = "%(message)s"
+    format_ = "{message}"
 
     if verbose:
         level = logging.DEBUG

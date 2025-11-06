@@ -171,12 +171,21 @@ def process_show(fp: Path, raw_name: str, name: str, year: int | None, new_stem:
     fp = fp.rename(fp.with_name(new_stem))
 
     for file in fp.iterdir():
-        if file.is_dir() and "SEASON" in file.name.upper():
-            logger.debug(f"Processing season folder: {file.name!r}")
-            season_num = next(re.finditer(r"(\d{1,2})(?:\s|$)", file.name), None)
-            if season_num is None:
-                raise CommandError(f"Unable to determine season number for {file}")
-            season_num = int(season_num.group())
+        if not file.is_dir():
+            logger.warning(f"Skipping extraneous file in season directory: {file.name}")
+            continue
 
-            season_folder = file.rename(file.with_name(f"Season {season_num:02d}"))
-            process_show_season(season_folder, raw_name, name, year, season_num)
+        logger.debug(f"Processing season folder: {file.name!r}")
+
+        season_num = next(
+            re.finditer(
+                r"(?:Season|S)\s?(\d{1,2})(?:\s|$)", file.name, flags=re.IGNORECASE
+            ),
+            None,
+        )
+        if season_num is None:
+            raise CommandError(f"Unable to determine season number for {file}")
+        season_num = int(season_num.group())
+
+        season_folder = file.rename(file.with_name(f"Season {season_num:02d}"))
+        process_show_season(season_folder, raw_name, name, year, season_num)

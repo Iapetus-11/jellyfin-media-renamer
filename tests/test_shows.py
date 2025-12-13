@@ -201,6 +201,14 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "The.Breakup",
             "2",
         ),
+        (
+            "./SpongeBob Squarepants/",
+            "SpongeBob SquarePants (1999) - S02E13-E14 - Survival of the Idiots & Dumped (1080p AMZN WEB-DL x265 RCVR).mkv",
+            2,
+            [13, 14],
+            "Survival of the Idiots & Dumped",
+            None,
+        ),
     ],
 )
 def test_infer_episode_info(

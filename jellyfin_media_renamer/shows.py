@@ -185,7 +185,7 @@ def process_show(fp: Path, raw_name: str, name: str, year: int | None, new_stem:
         )
         if season_num is None:
             raise CommandError(f"Unable to determine season number for {file}")
-        season_num = int(season_num.group())
+        season_num = int(season_num.group(1))
 
         season_folder = file.rename(file.with_name(f"Season {season_num:02d}"))
         process_show_season(season_folder, raw_name, name, year, season_num)

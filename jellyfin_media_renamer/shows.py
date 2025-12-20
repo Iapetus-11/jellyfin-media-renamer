@@ -7,6 +7,7 @@ from jellyfin_media_renamer.common import (
     CommandError,
     purge_extra_files,
     strip_tags,
+    SUBTITLES_FILE_EXTS,
     VIDEO_FILE_EXTS,
 )
 
@@ -132,7 +133,8 @@ def process_show_season(
             logger.warning(f"Unknown folder/object: {fp}")
             continue
 
-        if fp.suffixes[-1].removeprefix(".").lower() not in VIDEO_FILE_EXTS:
+        fp_ext = fp.suffixes[-1].removeprefix(".").lower()
+        if fp_ext not in VIDEO_FILE_EXTS and fp_ext not in SUBTITLES_FILE_EXTS:
             continue
 
         logger.debug(f"Processing season episode file: {fp.name!r}")

@@ -38,7 +38,7 @@ def infer_episode_info(
         r"ep(?P<ep_start>\d{1,3})",  # Ep01
         rf"{season}x(?P<ep_start>\d{{1,3}})(?:\s|$|\.|\[|\(|\,|_|-)",  # {season}x01
         rf"(?:^|\s|\.){season}(?P<ep_start>\d{{2,3}})(?:\s|\.|$|_|-)",  # {season}01
-        r"(?:^|\s|\.|_|-)(?P<ep_start>(?:0\d)|(?:[1-9]\d))(?:\s|\.|$|_|-)",  # 01
+        r"(?:^|\s|\.|_|-)(?P<ep_start>\d\d\d?)(?:\s|\.|$|_|-)",  # 01 or 155
     ]
 
     ep_start: int | None = None

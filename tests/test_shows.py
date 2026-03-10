@@ -209,6 +209,14 @@ from jellyfin_media_renamer.shows import infer_episode_info
             "Survival of the Idiots & Dumped",
             None,
         ),
+        (
+            "./[Anime Time] My Hero Academia/",
+            "[Anime Time] My Hero Academia - 155.mkv",
+            None,
+            [155],
+            None,
+            None,
+        ),
     ],
 )
 def test_infer_episode_info(

@@ -181,7 +181,7 @@ def process_show(fp: Path, raw_name: str, name: str, year: int | None, new_stem:
 
         season_num = next(
             re.finditer(
-                r"(?:Season|S)\s?(\d{1,2})(?:\s|$)", file.name, flags=re.IGNORECASE
+                r"(?:Season|S)\s?(\d{1,2})(?:\s|$|\.|-)", file.name, flags=re.IGNORECASE
             ),
             None,
         )

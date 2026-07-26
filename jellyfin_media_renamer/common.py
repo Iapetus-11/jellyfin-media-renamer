@@ -1,7 +1,7 @@
 import logging
 import os
-from pathlib import Path
 import re
+from pathlib import Path
 
 VIDEO_FILE_EXTS = [
     "mkv",

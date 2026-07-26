@@ -4,11 +4,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from jellyfin_media_renamer.common import (
+    SUBTITLES_FILE_EXTS,
+    VIDEO_FILE_EXTS,
     CommandError,
     purge_extra_files,
     strip_tags,
-    SUBTITLES_FILE_EXTS,
-    VIDEO_FILE_EXTS,
 )
 
 logger = logging.getLogger(__name__)
